@@ -1,0 +1,23 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory app:title="Timer">
+
+        <SeekBarPreference
+            app:title="Default timer duration"
+            app:key="default_timer"
+            app:showSeekBarValue="true"
+            app:min="1"
+            android:max="60" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Admin">
+
+        <SwitchPreferenceCompat
+            app:key="admin_switch"
+            app:title="Enable admin" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
