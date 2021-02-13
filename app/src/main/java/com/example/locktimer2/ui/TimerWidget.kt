@@ -1,4 +1,4 @@
-package com.example.locktimer2
+package com.example.locktimer2.ui
 
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
+import com.example.locktimer2.R
 import com.example.locktimer2.util.ACTION_START_DEFAULT_TIMER
 import com.example.locktimer2.util.startDefaultTimer
 
@@ -40,7 +41,7 @@ class TimerWidget : AppWidgetProvider() {
     override fun onReceive(context: Context?, intent: Intent?) {
         super.onReceive(context, intent)
         if (intent?.action == ACTION_START_DEFAULT_TIMER) {
-            startDefaultTimer(context!!)
+            context?.startDefaultTimer()
         }
     }
 }

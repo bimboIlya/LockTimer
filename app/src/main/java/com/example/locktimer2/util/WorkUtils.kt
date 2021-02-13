@@ -8,11 +8,17 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.example.locktimer2.TimerWorker
-import com.example.locktimer2.admin.AdminHelper
+import com.example.locktimer2.admin.isAdminActive
 
-fun startTimer(context: Context, duration: Long) {
-    if (!AdminHelper.getInstance(context).isAdminActive()) {
-        Toast.makeText(context, "enable admin blease", Toast.LENGTH_SHORT).show()
+fun Context.startDefaultTimer() {
+    val sp = PreferenceManager.getDefaultSharedPreferences(this)
+    val defaultDuration = sp.getInt(DEFAULT_TIMER_KEY, -1)
+    startTimer(defaultDuration)
+}
+
+fun Context.startTimer(duration: Int) {
+    if (!isAdminActive()) {
+        Toast.makeText(this, "enable admin blease", Toast.LENGTH_SHORT).show()
         return
     }
     if (duration <= 0) return
@@ -22,25 +28,21 @@ fun startTimer(context: Context, duration: Long) {
         .addTag(TIMER_LOCK_WORK_NAME)
         .build()
 
-    WorkManager.getInstance(context).enqueueUniqueWork(
+    workManager.enqueueUniqueWork(
         TIMER_LOCK_WORK_NAME,
-        ExistingWorkPolicy.KEEP,
+        ExistingWorkPolicy.REPLACE,
         request
     )
 }
 
-private fun buildData(input: Long): Data {
+private fun buildData(input: Int): Data {
     return Data.Builder()
-        .putLong(TIMER_LOCK_DURATION_KEY, input)
+        .putInt(TIMER_LOCK_DURATION_KEY, input)
         .build()
 }
 
-fun startDefaultTimer(context: Context) {
-    val sp = PreferenceManager.getDefaultSharedPreferences(context)
-    val defaultDuration = sp.getInt(DEFAULT_TIMER_KEY, -1).toLong()
-    startTimer(context, defaultDuration)
+fun Context.cancelTimer() {
+    workManager.cancelUniqueWork(TIMER_LOCK_WORK_NAME)
 }
 
-fun cancelTimer(context: Context) {
-    WorkManager.getInstance(context).cancelUniqueWork(TIMER_LOCK_WORK_NAME)
-}
+val Context.workManager get() = WorkManager.getInstance(this)

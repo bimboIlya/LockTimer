@@ -1,15 +1,28 @@
-package com.example.locktimer2
+package com.example.locktimer2.ui
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SeekBarPreference
 import androidx.preference.SwitchPreferenceCompat
-import com.example.locktimer2.admin.AdminHelper
+import com.example.locktimer2.R
+import com.example.locktimer2.admin.isAdminActive
+import com.example.locktimer2.admin.removeAdmin
+import com.example.locktimer2.admin.requestAdminCompat
 import com.example.locktimer2.util.ADMIN_SWITCH_KEY
 import com.example.locktimer2.util.DEFAULT_TIMER_KEY
+import com.example.locktimer2.util.setOnClickListener
 
 class SettingsActivity : AppCompatActivity() {
+
+    companion object {
+        fun start(context: Context) {
+            val intent = Intent(context, SettingsActivity::class.java)
+            context.startActivity(intent)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,15 +42,12 @@ class SettingsActivity : AppCompatActivity() {
 
     class SettingsFragment : PreferenceFragmentCompat() {
 
-        private lateinit var adminHelper: AdminHelper
-
         private lateinit var adminSwitch: SwitchPreferenceCompat
         private lateinit var defaultTimeSeekBar: SeekBarPreference
 
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey)
-            adminHelper = AdminHelper.getInstance(requireContext())
             initPreferences()
             handlePreferences()
         }
@@ -48,25 +58,19 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         private fun handlePreferences() {
-            adminSwitch.setOnPreferenceClickListener {
-                it as SwitchPreferenceCompat
-                if (it.isChecked) {
-                    adminHelper.requestAdmin()
-                } else {
-                    adminHelper.removeAdmin()
+            adminSwitch.setOnClickListener { switch ->
+                when (switch.isChecked) {
+                    true -> requestAdminCompat()
+                    false -> removeAdmin()
                 }
-                true
             }
         }
 
         override fun onResume() {
             super.onResume()
-            checkIfAdminGranted()
-        }
 
-        // user may cancel if asked to grant admin, so we make sure to set correct view state
-        private fun checkIfAdminGranted() {
-            adminSwitch.isChecked = adminHelper.isAdminActive()
+            // user may cancel if asked to grant admin, so we make sure to set correct view state
+            adminSwitch.isChecked = isAdminActive()
         }
     }
 }

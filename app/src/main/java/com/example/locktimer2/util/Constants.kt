@@ -10,3 +10,4 @@ const val TIMER_LOCK_DURATION_KEY = "timer_lock_duration_minutes"
 const val TIMER_LOCK_DATA_TAG = "timer_lock_data"
 
 const val NOTIFICATION_ID = 42
+const val NOTIFICATION_CHANNEL_ID = "poop_channel"

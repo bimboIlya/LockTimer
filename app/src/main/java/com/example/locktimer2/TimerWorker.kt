@@ -1,21 +1,21 @@
 package com.example.locktimer2
 
 import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
-import androidx.annotation.RequiresApi
+import android.os.Handler
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.work.ForegroundInfo
-import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.example.locktimer2.admin.AdminHelper
+import com.example.locktimer2.admin.lockScreen
+import com.example.locktimer2.ui.MainActivity
+import com.example.locktimer2.util.NOTIFICATION_CHANNEL_ID
 import com.example.locktimer2.util.NOTIFICATION_ID
 import com.example.locktimer2.util.TIMER_LOCK_DURATION_KEY
+import com.example.locktimer2.util.workManager
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -24,47 +24,61 @@ class TimerWorker(
     workerParams: WorkerParameters
 ) : Worker(context, workerParams) {
 
-    private val notificationManager =
-        context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-    private var durationMinutes: Long = -1
-
     override fun doWork(): Result {
-        durationMinutes = inputData.getLong(TIMER_LOCK_DURATION_KEY, -1)
+        return startTimerWithResult()
+    }
+
+    private fun startTimerWithResult(): Result {
+        showStartToast()
+
+        val durationMinutes = inputData.getInt(TIMER_LOCK_DURATION_KEY, -1)
         if (durationMinutes <= 0) return Result.failure()
 
-        val triggerDate = Calendar.getInstance(Locale.getDefault())
-            .apply { add(Calendar.MINUTE, durationMinutes.toInt()) }.time
+        showLockNotification(durationMinutes)
 
-        val lockTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(triggerDate)
+        var timeLeftSeconds = durationMinutes * 60
 
-        setForegroundAsync(getForegroundInfo(lockTime))
+        while (timeLeftSeconds > 0) {
+            if (isStopped) return Result.failure()
 
-        while (durationMinutes > 0) {
-            Thread.sleep(60 * 1000)  // 1 minute
-            durationMinutes -= 1
+            Thread.sleep(1000)
+            timeLeftSeconds--
         }
-        AdminHelper.getInstance(context).lockScreen()
+
+        lockScreen()
 
         return Result.success()
     }
 
-    private fun getForegroundInfo(lockTime: String): ForegroundInfo {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            createChannel()
+    private fun showStartToast() {
+        Handler(context.mainLooper).post {
+            Toast.makeText(context, "timer start", Toast.LENGTH_SHORT).show()
         }
+    }
 
+    private fun showLockNotification(durationMinutes: Int) {
+        val triggerDate = Calendar.getInstance(Locale.getDefault())
+            .apply { add(Calendar.MINUTE, durationMinutes) }
+            .time
+
+        val lockTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(triggerDate)
+
+        setForegroundAsync(getForegroundInfo(lockTime))
+    }
+
+    private fun getForegroundInfo(lockTime: String): ForegroundInfo {
         val notification = buildNotification(lockTime)
 
         return ForegroundInfo(NOTIFICATION_ID, notification)
     }
 
     private fun buildNotification(lockTime: String): Notification {
-        val cancelPendingIntent = WorkManager.getInstance(context).createCancelPendingIntent(id)
+        val cancelPendingIntent = context.workManager.createCancelPendingIntent(id)
 
         val contentIntent = Intent(context, MainActivity::class.java)
         val contentPendingIntent = PendingIntent.getActivity(context, 42, contentIntent, 0)
 
-        return NotificationCompat.Builder(context, NOTIFICATION_ID.toString())
+        return NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.icon_hourglass)
             .setContentTitle("Timer is running!")
             .setContentText("Screen will be locked at $lockTime")
@@ -72,12 +86,5 @@ class TimerWorker(
             .setContentIntent(contentPendingIntent)
             .addAction(0, "Cancel", cancelPendingIntent)
             .build()
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun createChannel() {
-        val channel = NotificationChannel("id", "name", NotificationManager.IMPORTANCE_DEFAULT)
-
-        notificationManager.createNotificationChannel(channel)
     }
 }
