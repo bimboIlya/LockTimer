@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Handler
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationCompat.PRIORITY_MAX
 import androidx.work.ForegroundInfo
 import androidx.work.Worker
 import androidx.work.WorkerParameters
@@ -82,6 +83,7 @@ class TimerWorker(
             .setSmallIcon(R.drawable.icon_hourglass)
             .setContentTitle("Timer is running!")
             .setContentText("Screen will be locked at $lockTime")
+            .setPriority(PRIORITY_MAX)
             .setShowWhen(false)
             .setContentIntent(contentPendingIntent)
             .addAction(0, "Cancel", cancelPendingIntent)

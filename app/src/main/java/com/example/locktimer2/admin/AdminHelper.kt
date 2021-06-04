@@ -10,19 +10,19 @@ import androidx.fragment.app.Fragment
 
 private object AdminHelper {
 
-    private lateinit var context: Context
-    private lateinit var dpm: DevicePolicyManager
-    private lateinit var cm: ComponentName
+    private lateinit var app: Application
+    private lateinit var policyManager: DevicePolicyManager
+    private lateinit var componentName: ComponentName
 
-    fun init(context: Context) {
-        this.context = context
-        dpm = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
-        cm = ComponentName(AdminHelper.context, AdminReceiver::class.java)
+    fun init(application: Application) {
+        app = application
+        policyManager = app.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
+        componentName = ComponentName(app, AdminReceiver::class.java)
     }
 
-    fun requestAdmin(context: Context = this.context) {
+    fun requestAdmin(context: Context = app) {
         val intent = Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN).apply {
-            putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, cm)
+            putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName)
             putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "blease bro")
         }
         context.startActivity(intent)
@@ -35,15 +35,14 @@ private object AdminHelper {
     }
 
     fun removeAdmin() {
-        dpm.removeActiveAdmin(cm)
+        policyManager.removeActiveAdmin(componentName)
     }
 
-    fun isAdminActive(): Boolean {
-        return dpm.isAdminActive(cm)
-    }
+    fun isAdminActive(): Boolean =
+        policyManager.isAdminActive(componentName)
 
     fun lockScreen() {
-        if (isAdminActive()) dpm.lockNow()
+        if (isAdminActive()) policyManager.lockNow()
     }
 }
 
