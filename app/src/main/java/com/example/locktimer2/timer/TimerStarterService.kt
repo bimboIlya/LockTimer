@@ -1,4 +1,4 @@
-package com.example.locktimer2
+package com.example.locktimer2.timer
 
 import android.app.Notification
 import android.app.PendingIntent
@@ -6,6 +6,7 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+import com.example.locktimer2.R
 import com.example.locktimer2.ui.TimerWidget
 import com.example.locktimer2.util.ACTION_START_DEFAULT_TIMER
 import com.example.locktimer2.util.NOTIFICATION_CHANNEL_ID
@@ -32,5 +33,4 @@ class TimerStarterService : Service() {
             .setShowWhen(false)
             .build()
     }
-
 }

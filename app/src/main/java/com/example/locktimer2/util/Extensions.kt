@@ -19,12 +19,11 @@ fun Activity.hideKeyboard() {
 
 fun Fragment.hideKeyboard() = requireActivity().hideKeyboard()
 
-
-inline fun <reified P : Preference> P.setOnClickListener(
-    crossinline clickListener: (P) -> Unit
-) = setOnPreferenceClickListener {
-    clickListener(this)
-    true
+inline fun <reified P : Preference> P.setOnClickListener(crossinline clickListener: (P) -> Unit) {
+    setOnPreferenceClickListener {
+        clickListener(this)
+        true
+    }
 }
 
 inline fun <reified S : Service> Context.isServiceRunning(): Boolean =

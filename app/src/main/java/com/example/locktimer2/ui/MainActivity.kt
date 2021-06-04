@@ -10,8 +10,8 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.work.*
 import com.example.locktimer2.R
-import com.example.locktimer2.TimerStarterService
 import com.example.locktimer2.databinding.ActivityMainBinding
+import com.example.locktimer2.timer.*
 import com.example.locktimer2.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -31,17 +31,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setUpClickListeners() = with(binding) {
-        btnStart.setOnClickListener {
-            startTimerIfInputNotPoop()
-        }
+        btnStart.setOnClickListener { startTimerIfInputNotPoop() }
 
-        btnDefaultStart.setOnClickListener {
-            startDefaultTimer()
-        }
+        btnDefaultStart.setOnClickListener { startDefaultTimer() }
 
-        btnStop.setOnClickListener {
-            cancelTimer()
-        }
+        btnStop.setOnClickListener { cancelTimer() }
 
         btnStartService.setOnClickListener {
             startService(Intent(this@MainActivity, TimerStarterService::class.java))

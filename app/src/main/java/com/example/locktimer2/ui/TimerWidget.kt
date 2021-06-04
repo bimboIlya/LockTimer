@@ -7,8 +7,8 @@ import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
 import com.example.locktimer2.R
+import com.example.locktimer2.timer.startDefaultTimer
 import com.example.locktimer2.util.ACTION_START_DEFAULT_TIMER
-import com.example.locktimer2.util.startDefaultTimer
 
 class TimerWidget : AppWidgetProvider() {
 

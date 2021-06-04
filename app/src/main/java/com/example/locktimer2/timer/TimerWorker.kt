@@ -1,4 +1,4 @@
-package com.example.locktimer2
+package com.example.locktimer2.timer
 
 import android.app.Notification
 import android.app.PendingIntent
@@ -11,12 +11,12 @@ import androidx.core.app.NotificationCompat.PRIORITY_MAX
 import androidx.work.ForegroundInfo
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import com.example.locktimer2.R
 import com.example.locktimer2.admin.lockScreen
 import com.example.locktimer2.ui.MainActivity
 import com.example.locktimer2.util.NOTIFICATION_CHANNEL_ID
 import com.example.locktimer2.util.NOTIFICATION_ID
 import com.example.locktimer2.util.TIMER_LOCK_DURATION_KEY
-import com.example.locktimer2.util.workManager
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -25,11 +25,10 @@ class TimerWorker(
     workerParams: WorkerParameters
 ) : Worker(context, workerParams) {
 
-    override fun doWork(): Result {
-        return startTimerWithResult()
-    }
+    override fun doWork(): Result =
+        startTimerForResult()
 
-    private fun startTimerWithResult(): Result {
+    private fun startTimerForResult(): Result {
         showStartToast()
 
         val durationMinutes = inputData.getInt(TIMER_LOCK_DURATION_KEY, -1)
