@@ -2,12 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.locktimer2">
 
-
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
-        android:icon="@drawable/icon_hourglass"
+        android:icon="@drawable/peepo_sleep"
         android:label="@string/app_name"
         android:roundIcon="@drawable/icon_hourglass"
         android:supportsRtl="true"
@@ -48,6 +48,8 @@
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
         </receiver>
+
+        <service android:name=".TimerStarterService" />
 
     </application>
 

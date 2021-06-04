@@ -1,5 +1,6 @@
 package com.example.locktimer2.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -9,6 +10,7 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.work.*
 import com.example.locktimer2.R
+import com.example.locktimer2.TimerStarterService
 import com.example.locktimer2.databinding.ActivityMainBinding
 import com.example.locktimer2.util.*
 
@@ -25,6 +27,7 @@ class MainActivity : AppCompatActivity() {
         setUpClickListeners()
 
         observeTimerState()
+        setServiceButtonsState(isServiceRunning<TimerStarterService>())
     }
 
     private fun setUpClickListeners() = with(binding) {
@@ -38,6 +41,16 @@ class MainActivity : AppCompatActivity() {
 
         btnStop.setOnClickListener {
             cancelTimer()
+        }
+
+        btnStartService.setOnClickListener {
+            startService(Intent(this@MainActivity, TimerStarterService::class.java))
+            setServiceButtonsState(isServiceRunning = true)
+        }
+
+        btnStopService.setOnClickListener {
+            stopService(Intent(this@MainActivity, TimerStarterService::class.java))
+            setServiceButtonsState(isServiceRunning = false)
         }
     }
 
@@ -69,6 +82,11 @@ class MainActivity : AppCompatActivity() {
         input.isInvisible = isTimerRunning
         btnDefaultStart.isInvisible = isTimerRunning
         btnStop.isVisible = isTimerRunning
+    }
+
+    private fun setServiceButtonsState(isServiceRunning: Boolean) = with(binding) {
+        btnStartService.isInvisible = isServiceRunning
+        btnStopService.isVisible = isServiceRunning
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
