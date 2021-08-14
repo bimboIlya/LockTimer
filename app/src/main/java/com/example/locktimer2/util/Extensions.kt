@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.ActivityManager
 import android.app.Service
 import android.content.Context
+import android.content.Intent
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -30,3 +31,11 @@ inline fun <reified S : Service> Context.isServiceRunning(): Boolean =
     (getSystemService(Service.ACTIVITY_SERVICE) as ActivityManager)
         .getRunningServices(Int.MAX_VALUE)
         .any { it.service.className == S::class.java.name }
+
+inline fun <reified S : Service> Context.startService() {
+    startService(Intent(this, S::class.java))
+}
+
+inline fun <reified S : Service> Context.stopService() {
+    stopService(Intent(this, S::class.java))
+}

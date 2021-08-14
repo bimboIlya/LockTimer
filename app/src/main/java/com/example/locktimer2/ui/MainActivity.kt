@@ -1,6 +1,5 @@
 package com.example.locktimer2.ui
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -38,12 +37,12 @@ class MainActivity : AppCompatActivity() {
         btnStop.setOnClickListener { cancelTimer() }
 
         btnStartService.setOnClickListener {
-            startService(Intent(this@MainActivity, TimerStarterService::class.java))
+            startService<TimerStarterService>()
             setServiceButtonsState(isServiceRunning = true)
         }
 
         btnStopService.setOnClickListener {
-            stopService(Intent(this@MainActivity, TimerStarterService::class.java))
+            stopService<TimerStarterService>()
             setServiceButtonsState(isServiceRunning = false)
         }
     }
