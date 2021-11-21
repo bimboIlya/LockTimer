@@ -2,12 +2,12 @@ package com.example.locktimer2.timer
 
 import android.app.Notification
 import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.widget.Toast
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationCompat.PRIORITY_MAX
+import androidx.core.app.NotificationCompat.*
 import androidx.work.ForegroundInfo
 import androidx.work.Worker
 import androidx.work.WorkerParameters
@@ -22,7 +22,7 @@ import java.util.*
 
 class TimerWorker(
     private val context: Context,
-    workerParams: WorkerParameters
+    workerParams: WorkerParameters,
 ) : Worker(context, workerParams) {
 
     override fun doWork(): Result =
@@ -36,7 +36,7 @@ class TimerWorker(
 
         showLockNotification(durationMinutes)
 
-        var timeLeftSeconds = durationMinutes * 60
+        var timeLeftSeconds = durationMinutes
 
         while (timeLeftSeconds > 0) {
             if (isStopped) return Result.failure()
@@ -76,15 +76,16 @@ class TimerWorker(
         val cancelPendingIntent = context.workManager.createCancelPendingIntent(id)
 
         val contentIntent = Intent(context, MainActivity::class.java)
-        val contentPendingIntent = PendingIntent.getActivity(context, 42, contentIntent, 0)
+        val contentPendingIntent = PendingIntent.getActivity(context, 42, contentIntent, FLAG_IMMUTABLE)
 
-        return NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+        return Builder(context, NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.icon_hourglass)
             .setContentTitle("Timer is running!")
             .setContentText("Screen will be locked at $lockTime")
             .setPriority(PRIORITY_MAX)
             .setShowWhen(false)
             .setContentIntent(contentPendingIntent)
+            .setForegroundServiceBehavior(FOREGROUND_SERVICE_IMMEDIATE)
             .addAction(0, "Cancel", cancelPendingIntent)
             .build()
     }
