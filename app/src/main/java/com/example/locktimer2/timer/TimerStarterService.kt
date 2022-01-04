@@ -1,10 +1,12 @@
 package com.example.locktimer2.timer
 
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.app.Service
 import android.content.Intent
+import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE
@@ -23,9 +25,11 @@ class TimerStarterService : Service() {
         return super.onStartCommand(intent, flags, startId)
     }
 
+    @SuppressLint("LaunchActivityFromNotification")
     private fun createNotification(): Notification {
-        val intent = Intent(this, TimerWidget::class.java).setAction(ACTION_START_DEFAULT_TIMER)
-        val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, FLAG_IMMUTABLE)
+        val intent = TimerWidget.createIntentForDefaultTimer(this)
+        val flag = if (Build.VERSION.SDK_INT >= 23) FLAG_IMMUTABLE else 0
+        val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, flag)
 
         return NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.crescent)
