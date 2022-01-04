@@ -40,7 +40,7 @@ class TimerWorker(
 
         showLockNotification(durationMinutes)
 
-        var timeLeftSeconds = durationMinutes
+        var timeLeftSeconds = durationMinutes * 60
 
         while (timeLeftSeconds > 0) {
             if (isStopped) return Result.failure()
