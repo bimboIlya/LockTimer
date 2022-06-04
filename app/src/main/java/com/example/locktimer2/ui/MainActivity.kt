@@ -26,7 +26,6 @@ class MainActivity : AppCompatActivity() {
         setUpClickListeners()
 
         observeTimerState()
-        setServiceButtonsState(isServiceRunning<TimerStarterService>())
     }
 
     private fun setUpClickListeners() = with(binding) {
@@ -35,16 +34,6 @@ class MainActivity : AppCompatActivity() {
         btnDefaultStart.setOnClickListener { startDefaultTimer() }
 
         btnStop.setOnClickListener { cancelTimer() }
-
-        btnStartService.setOnClickListener {
-            startService<TimerStarterService>()
-            setServiceButtonsState(isServiceRunning = true)
-        }
-
-        btnStopService.setOnClickListener {
-            stopService<TimerStarterService>()
-            setServiceButtonsState(isServiceRunning = false)
-        }
     }
 
     private fun startTimerIfInputNotPoop() {
@@ -75,11 +64,6 @@ class MainActivity : AppCompatActivity() {
         input.isInvisible = isTimerRunning
         btnDefaultStart.isInvisible = isTimerRunning
         btnStop.isVisible = isTimerRunning
-    }
-
-    private fun setServiceButtonsState(isServiceRunning: Boolean) = with(binding) {
-        btnStartService.isInvisible = isServiceRunning
-        btnStopService.isVisible = isServiceRunning
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
