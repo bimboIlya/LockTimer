@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
 
         setUpClickListeners()
 
-        observeTimerState()
+        observeTimerWorkStatus(this, ::setUiState)
     }
 
     private fun setUpClickListeners() = with(binding) {
@@ -45,17 +45,6 @@ class MainActivity : AppCompatActivity() {
             hideKeyboard()
         } else {
             Toast.makeText(this, "Input is poop", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun observeTimerState() {
-        workManager.getWorkInfosByTagLiveData(TIMER_LOCK_WORK_NAME).observe(this) { workInfoList ->
-            if (workInfoList.isNullOrEmpty()) return@observe
-
-            val workInfo = workInfoList.first()
-            val isTimerRunning = workInfo.state == WorkInfo.State.RUNNING
-
-            setUiState(isTimerRunning)
         }
     }
 
