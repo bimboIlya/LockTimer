@@ -5,8 +5,6 @@ import android.app.Notification
 import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.content.Context
-import android.content.Intent
-import android.os.Build
 import android.os.Handler
 import android.widget.Toast
 import androidx.core.app.NotificationCompat.*
@@ -15,9 +13,7 @@ import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.example.locktimer2.R
 import com.example.locktimer2.admin.lockScreen
-import com.example.locktimer2.ui.MainActivity
 import com.example.locktimer2.ui.TimerWidget
-import com.example.locktimer2.util.ACTION_START_DEFAULT_TIMER
 import com.example.locktimer2.util.NOTIFICATION_CHANNEL_ID
 import com.example.locktimer2.util.NOTIFICATION_ID
 import com.example.locktimer2.util.TIMER_LOCK_DURATION_KEY
@@ -81,11 +77,10 @@ class TimerWorker(
         val cancelPendingIntent = context.workManager.createCancelPendingIntent(id)
 
         val intent = TimerWidget.createIntentForDefaultTimer(context)
-        val flag = if (Build.VERSION.SDK_INT >= 23) FLAG_IMMUTABLE else 0
-        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, flag)
+        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, FLAG_IMMUTABLE)
 
         return Builder(context, NOTIFICATION_CHANNEL_ID)
-            .setSmallIcon(R.drawable.icon_hourglass)
+            .setSmallIcon(R.drawable.crescent)
             .setContentTitle("Timer is running!")
             .setContentText("Screen will be locked at $lockTime")
             .setPriority(PRIORITY_MAX)

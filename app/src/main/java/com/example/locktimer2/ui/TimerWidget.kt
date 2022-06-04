@@ -1,11 +1,11 @@
 package com.example.locktimer2.ui
 
 import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.widget.RemoteViews
 import com.example.locktimer2.R
 import com.example.locktimer2.timer.startDefaultTimer
@@ -38,8 +38,7 @@ class TimerWidget : AppWidgetProvider() {
     ) {
         val rv = RemoteViews(context?.packageName, R.layout.widget_timer)
         val intent = createIntentForDefaultTimer(requireNotNull(context))
-        val flag = if (Build.VERSION.SDK_INT >= 23) PendingIntent.FLAG_IMMUTABLE else 0
-        val pi = PendingIntent.getBroadcast(context, widgetId, intent, flag)
+        val pi = PendingIntent.getBroadcast(context, widgetId, intent, FLAG_IMMUTABLE)
 
         rv.setOnClickPendingIntent(R.id.widget_btn, pi)
 
